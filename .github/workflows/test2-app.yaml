@@ -1,0 +1,17 @@
+# Echo this task always runs - whatever the commit
+
+name: Test 2 App
+
+on: 
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+jobs:
+  test2-app:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run second test of App 
+        run: if [ $RANDOM -gt 20000 ]; then echo "I failed"; exit 1; else echo "I passed"; exit 0; fi
