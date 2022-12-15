@@ -14,4 +14,4 @@ jobs:
 
     steps:
       - name: Run second test of App 
-        run: if [ $RANDOM -gt 20000 ]; then echo "I failed"; exit 1; else echo "I passed"; exit 0; fi
+        run: if [ $RANDOM -gt 60000 ]; then echo "I failed"; exit 1; else echo "I passed"; exit 0; fi
