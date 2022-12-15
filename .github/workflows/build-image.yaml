@@ -2,16 +2,14 @@
 
 name: Build Image
 
- on:
-   workflow_run:
-     workflows: ["Test App"]
-     types: [completed] #requested
+on:
+  workflow_run:
+    workflows: ["Test App"]
+    types: [completed] #requested
      
-     
- jobs:
+jobs:
   build-image:
     runs-on: ubuntu-latest
-
     steps:
       - name: Run test of App 
         run: echo "I built it!"
