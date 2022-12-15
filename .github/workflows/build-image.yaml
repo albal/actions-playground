@@ -4,7 +4,7 @@ name: Build Image
 
 on:
   workflow_run:
-    workflows: ["Test App"]
+    workflows: ["Test App", "Test 2 App"]
     types: [completed] #requested
      
 jobs:
