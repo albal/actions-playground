@@ -1,0 +1,17 @@
+# This is called on a succesful build
+
+name: Build Image
+
+ on:
+   workflow_run:
+     workflows: ["Test App"]
+     types: [completed] #requested
+     
+     
+ jobs:
+  build-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run test of App 
+        run: echo "I built it!"
