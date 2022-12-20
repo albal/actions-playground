@@ -3,9 +3,9 @@
 name: Build Image
 
 on:
-  workflow_run:
-    workflows: ["Test App", "Test 2 App"]
-    types: [completed] #requested
+  pull_request:
+    types:
+      - closed
      
 jobs:
   build-image:
