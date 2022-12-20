@@ -5,4 +5,4 @@ An action to simulate testing an app.
 
 If successful build and push.
 
-12345
+123456
