@@ -1,0 +1,16 @@
+# This is called on a succesful build
+
+name: Depploy Image
+
+on:
+  workflow_run:
+    workflows: Build Image
+    types: [completed] #requested
+     
+jobs:
+  deploy-image:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Deploy the App
+        run: echo "I deployed it"
