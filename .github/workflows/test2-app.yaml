@@ -1,6 +1,6 @@
 # Echo this task always runs - whatever the commit
 
-name: Test App
+name: Test 2 App
 
 on: 
   push:
@@ -9,10 +9,9 @@ on:
     branches: [ "master", "main" ]
 
 jobs:
-  test-app:
+  test2-app:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Run test of App 
+      - name: Run second test of App 
         run: if [ $RANDOM -gt 60000 ]; then echo "I failed"; exit 1; else echo "I passed"; exit 0; fi
-      
