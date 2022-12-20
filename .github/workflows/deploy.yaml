@@ -1,6 +1,6 @@
 # This is called on a succesful build
 
-name: Depploy Image
+name: Deploy Image
 
 on:
   workflow_run:
