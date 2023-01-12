@@ -1,2 +1,3 @@
-FROM alpine:3.4
+FROM alpine
+RUN apk update
 RUN apk add vim
