@@ -1,0 +1,48 @@
+name: App Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Docker image tag to deploy'
+        required: true
+        default: 'master'
+      workspace:
+        description: 'Environment to deploy to on Azure'
+        required: true
+        default: 'Dev'
+        type: choice
+        options:
+          - Dev
+          - Test
+          - Pre-Prod
+          - Prod
+          - Load-Test
+
+jobs:
+  app-deploy:
+    name: 'App Deploy'
+    runs-on: ubuntu-latest
+    environment: ${{inputs.workspace}}
+
+    steps:
+    
+      - name: Deploy Dev to Azure Web App
+        run: echo "Deploying ${{ inputs.tag }} in ${{ inputs.workspace }}"
+        if: ${{ inputs.workspace == 'Dev' }}
+
+      - name: Deploy Test to Azure Web App
+        run: echo "Deploying ${{ inputs.tag }} in ${{ inputs.workspace }}"
+        if: ${{ inputs.workspace == 'Test' }}
+
+      - name: Deploy Load-Test to Azure Web App
+        run: echo "Deploying ${{ inputs.tag }} in ${{ inputs.workspace }}"
+        if: ${{ inputs.workspace == 'Load-Test' }}
+
+      - name: Deploy Pre-Prod to Azure Web App
+        run: echo "Deploying ${{ inputs.tag }} in ${{ inputs.workspace }}"
+        if: ${{ inputs.workspace == 'Pre-Prod' }}
+
+      - name: Deploy Prod to Azure Web App
+        run: echo "Deploying ${{ inputs.tag }} in ${{ inputs.workspace }}"
+        if: ${{ inputs.workspace == 'Prod' }}
