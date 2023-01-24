@@ -1,0 +1,11 @@
+name: Show IP
+
+on: [workflow_dispatch]
+
+jobs:
+  
+  Show-IP:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show IP
+        run: theIP=$(curl https://ifconfig.co/) echo "Hello the IP is $theIP"
