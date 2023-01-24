@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Get the IP
-      run: curl https://ifconfig.co/
+      run: curl https://ifconfig.tsew.com/
     - name: Get the IP
-      run: echo "theIP=$(curl https://ifconfig.co/)" >> $GITHUB_ENV
+      run: echo "theIP=$(curl https://ifconfig.tsew.com/)" >> $GITHUB_ENV
     - name: Echo the IP
       run: echo "Hello the IP is ${{ env.theIP }}"
