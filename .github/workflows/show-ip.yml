@@ -7,5 +7,7 @@ jobs:
   Show-IP:
     runs-on: ubuntu-latest
     steps:
-      - name: Show IP
-        run: theIP=$(curl https://ifconfig.co/) echo "Hello the IP is ${theIP}"
+      - name: Get the IP
+        run: echo "theIP=$(curl https://ifconfig.co/)" >> $GITHUB_ENV
+      - name: Echo the IP
+        run: echo "Hello the IP is ${{ env.theIP }}"
