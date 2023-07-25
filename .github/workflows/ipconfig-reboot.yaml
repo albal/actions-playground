@@ -1,0 +1,21 @@
+name: ipconfig-reboot
+
+on: 
+  schedule:
+    - cron: '17 17 * * 2' # every Tuesday at 17:17
+
+jobs:
+  ipconfig-reboot:
+    runs-on: ubuntu-latest
+    name: Restart Instance
+    env:
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+    steps:
+      - name: Restart Instance
+        uses: oracle-actions/run-oci-cli-command@v1.1.1
+        with:
+          command: 'oracle-compute restart instance VPS3'
