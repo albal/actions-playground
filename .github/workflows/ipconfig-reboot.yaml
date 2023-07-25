@@ -19,4 +19,4 @@ jobs:
       - name: Restart Instance
         uses: oracle-actions/run-oci-cli-command@v1.1.1
         with:
-          command: 'oracle-compute restart instance VPS3'
+          command: 'compute restart instance VPS3'
