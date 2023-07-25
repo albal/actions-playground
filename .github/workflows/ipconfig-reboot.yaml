@@ -3,6 +3,7 @@ name: ipconfig-reboot
 on: 
   schedule:
     - cron: '17 17 * * 2' # every Tuesday at 17:17
+  workflow_dispatch: 
 
 jobs:
   ipconfig-reboot:
