@@ -22,7 +22,7 @@ jobs:
         
         with:
           command: 'iam compartment list --compartment-id-in-subtree=true'
-          query: "data[?name=='testing'].id"
+          query: "data[?name=='tsew'].id"
           silent: 'False'
 
       - name: Retrieve the display name and shape of the instances in my compartment
