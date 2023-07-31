@@ -1,12 +1,15 @@
+# This is called on a succesful build
+name: Pass Between Steps
+
 on:
-  workflow-dispatch:
+  workflow_dispatch:
 
 jobs:
   go-lint:
     name: Pass
     runs-on: ubuntu-22.04
     steps:
-      - name: Create two lines in a file
+      - name: Create two lines in the output
         id: my-link
         run: |
           echo "Hello One"
