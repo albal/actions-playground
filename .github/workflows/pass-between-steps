@@ -1,0 +1,17 @@
+on:
+  workflow-dispatch:
+
+jobs:
+  go-lint:
+    name: Pass
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Create two lines in a file
+        id: my-link
+        run: |
+          echo "Hello One"
+          echo "Hello Two"
+
+      - name: Output from my-link
+        run: |
+          echo "${{ steps.my-link.outputs.stdout }}"
