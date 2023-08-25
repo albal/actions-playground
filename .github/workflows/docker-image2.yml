@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile2 --tag demo-replace:latest
+      run: docker build . --build-arg USER="me" --build-arg PASSWORD="mySecurePa55" --file Dockerfile2 --tag demo-replace:latest
