@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+
 WORKDIR /src
 ARG USER
 ARG PASSWORD
@@ -6,5 +7,7 @@ ENV PAT_USER=$USER
 ENV PAT_PASSWORD=$PASSWORD
 
 COPY ["nuget.config", "nuget.config"]
+RUN cmd whoami
+RUN cmd ver
 RUN powershell (Get-Content August.PropertyManager.API\nuget.config).Replace("%PAT_USER%", $PAT_USER) | Set-Content August.PropertyManager.API\nuget.config
 RUN powershell (Get-Content August.PropertyManager.API\nuget.config).Replace("%PAT_PASSWORD%", $PAT_PASSWORD) | Set-Content August.PropertyManager.API\nuget.config
