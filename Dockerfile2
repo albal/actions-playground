@@ -7,6 +7,6 @@ ENV PAT_USER=$USER
 ENV PAT_PASSWORD=$PASSWORD
 
 COPY ["nuget.config", "nuget.config"]
-RUN powershell -Command "(Get-Content nuget.config).Replace("%PAT_USER%", $PAT_USER) | Set-Content nuget.config"
-RUN powershell (Get-Content nuget.config).Replace("%PAT_PASSWORD%", $PAT_PASSWORD) | Set-Content nuget.config
+RUN powershell -Command "(Get-Content nuget.config).Replace('PAT_USER', $env:PAT_USER) | Set-Content nuget.config"
+RUN powershell -Command "(Get-Content nuget.config).Replace('PAT_PASSWORD', $env:PAT_PASSWORD) | Set-Content nuget.config"
 RUN type nuget.config
