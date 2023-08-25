@@ -6,5 +6,5 @@ ENV PAT_USER=$USER
 ENV PAT_PASSWORD=$PASSWORD
 
 COPY ["nuget.config", "nuget.config"]
-RUN (Get-Content August.PropertyManager.API\nuget.config).Replace("%PAT_USER%", $PAT_USER) | Set-Content August.PropertyManager.API\nuget.config
-RUN (Get-Content August.PropertyManager.API\nuget.config).Replace("%PAT_PASSWORD%", $PAT_PASSWORD) | Set-Content August.PropertyManager.API\nuget.config
+RUN powershell (Get-Content August.PropertyManager.API\nuget.config).Replace("%PAT_USER%", $PAT_USER) | Set-Content August.PropertyManager.API\nuget.config
+RUN powershell (Get-Content August.PropertyManager.API\nuget.config).Replace("%PAT_PASSWORD%", $PAT_PASSWORD) | Set-Content August.PropertyManager.API\nuget.config
