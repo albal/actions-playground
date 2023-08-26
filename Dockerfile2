@@ -1,6 +1,5 @@
 #FROM mcr.microsoft.com/windows/servercore:ltsc2022
-FROM mcr.microsoft.com/dotnet/core/sdk:7.0-windowsservercore-ltsc2022
-
+FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /src
 ARG USER
 ARG PASSWORD
