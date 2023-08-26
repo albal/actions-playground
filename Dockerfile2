@@ -14,5 +14,5 @@ RUN powershell -Command "(Get-Content nuget.config).Replace('PAT_PASSWORD', $env
 
 FROM base AS final
 WORKDIR /app
-COPY --from=template nuget.config .
+COPY --from=template ["nuget.config", "nuget.config"]
 RUN type nuget.config
