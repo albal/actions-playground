@@ -1,5 +1,5 @@
 #FROM mcr.microsoft.com/windows/servercore:ltsc2022
-FROM mcr.microsoft.com/dotnet/core/sdk
+FROM mcr.microsoft.com/dotnet/core/sdk:7.0-windowsservercore-ltsc2022
 
 WORKDIR /src
 ARG USER
