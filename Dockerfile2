@@ -1,12 +1,18 @@
-#FROM mcr.microsoft.com/windows/servercore:ltsc2022
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
-WORKDIR /src
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/windows/servercore:ltsc2022 AS template
 ARG USER
 ARG PASSWORD
 ENV PAT_USER=$USER
 ENV PAT_PASSWORD=$PASSWORD
-
 COPY ["nuget.config", "nuget.config"]
 RUN powershell -Command "(Get-Content nuget.config).Replace('PAT_USER', $env:PAT_USER) | Set-Content nuget.config"
 RUN powershell -Command "(Get-Content nuget.config).Replace('PAT_PASSWORD', $env:PAT_PASSWORD) | Set-Content nuget.config"
+
+FROM base AS final
+WORKDIR /app
+COPY --from=tempate /app/nuget.config .
 RUN type nuget.config
