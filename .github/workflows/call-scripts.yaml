@@ -1,0 +1,21 @@
+name: Call Scripts
+
+on:
+  workflow_dispatch:
+
+jobs:
+  call-scripts:
+    name: 'Call Scripts'
+    runs-on: ubuntu-latest
+
+    steps:
+    
+      - name: Run Apple
+        run: ./apple.sh
+      
+      - name: Run Orange
+        run: ./scripts/orange.sh
+
+      - name: Run Banana
+        run: ./.github/banana.sh
+
