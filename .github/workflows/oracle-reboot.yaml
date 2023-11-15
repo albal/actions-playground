@@ -1,7 +1,9 @@
 name: ipconfig-reboot
 
 on: 
-  workflow_dispatch: 
+  workflow_dispatch:
+  schedule:
+    - cron: '10 4 1 * *'
 
 jobs:
   ipconfig-reboot:
