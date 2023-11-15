@@ -14,8 +14,14 @@ jobs:
       OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
       OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
     steps:
-      - name: Restart Instance
+      - name: Restart Instance 1
         uses: oracle-actions/run-oci-cli-command@v1.1.1
         with:
-          command: 'compute instance action --instance-id ocid1.instance.oc1.uk-london-1.anwgiljten2l5ticcmpdu6hqu3ctzaarfw2wnocelcjpuhvtjrq6nsd6yryq --action SOFTRESET'
+          command: 'compute instance action --instance-id ocid1.instance.oc1.uk-london-1.anwgiljten2l5ticwgl5x3av6po2o34cl5agazijbcwiqcg53hjwgtpv2cja --action SOFTRESET'
+          silent: 'False'
+    
+      - name: Restart Instance 2
+        uses: oracle-actions/run-oci-cli-command@v1.1.1
+        with:
+          command: 'compute instance action --instance-id ocid1.instance.oc1.uk-london-1.anwgiljten2l5ticgnis2m3mtat6h5svwpt7hentzocxyznmtfa5wepezeaq --action SOFTRESET'
           silent: 'False'
