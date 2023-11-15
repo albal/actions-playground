@@ -1,4 +1,4 @@
-name: ipconfig-reboot
+name: oracle-reboot
 
 on: 
   workflow_dispatch:
@@ -6,9 +6,9 @@ on:
     - cron: '10 4 1 * *'
 
 jobs:
-  ipconfig-reboot:
+  oracle-reboot:
     runs-on: ubuntu-latest
-    name: Restart Instance
+    name: Restart Instances
     env:
       OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
       OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
