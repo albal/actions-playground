@@ -26,6 +26,9 @@ jobs:
     environment: ${{inputs.workspace}}
 
     steps:
+
+      - name: Docker pull check
+        run: docker pull ${{inputs.tag}}
     
       - name: Deploy Dev to Azure Web App
         run: echo "Deploying ${{ inputs.tag }} in ${{ inputs.workspace }}"
