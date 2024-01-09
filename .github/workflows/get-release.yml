@@ -31,6 +31,7 @@ jobs:
         with:
          repo: "DFE-Digital/childrens-social-care-cpd-indexer"
          version: "tags/${{ inputs.tag }}"
-         file: "*.zip"
+         file: "release.zip"
+         
          
             
