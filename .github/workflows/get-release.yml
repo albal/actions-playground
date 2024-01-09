@@ -1,0 +1,35 @@
+name: Function App Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'App Tag to deploy'
+        required: true
+        default: 'v1.0.0'
+      workspace:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'Dev'
+        type: choice
+        options:
+          - Dev
+          - Test
+          - Pre-Prod
+          - Prod
+          - Load-Test
+
+          
+jobs:
+  build:
+    name: 'Function App Deploy'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.workspace }}
+    steps:
+      - name: Fetch Github Release Asset
+        uses: dsaltares/fetch-gh-release-asset@1.1.1
+        with:
+         repo: 'DFE-Digital/childrens-social-care-cpd-indexer'
+         version: ${{ inputs.tag }}
+         
+            
