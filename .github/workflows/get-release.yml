@@ -26,11 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.workspace }}
     steps:
-      - name: Fetch Github Release Asset
-        uses: dsaltares/fetch-gh-release-asset@1.1.1
-        with:
-         repo: "DFE-Digital/childrens-social-care-cpd-indexer"
-         version: "tags/v1.0.0"
-         file: "v1.0.0.zip"
-         token: ${{ secrets.GITHUB_TOKEN }}
-         
+      - name: Fetch release
+        run:  wget ${{ github.event.repository.name }}/archive/refs/tags/${{ inputs.tag }}.zip
+        
+      - name: Deploy Function App
+        run:  az functionapp deployment source config-zip --name ${{ vars.FAD_FUNCTION_APP_NAME }} --resource-group ${{ vars.FAD_RESOURCE_GROUP }} ${{ inputs.tag }}.zip
