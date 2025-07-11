@@ -1,0 +1,31 @@
+name: Unit Tests - Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      skip-tests:
+        description: "Skip test execution"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    if: ${{ !inputs.skip-tests }}
+    steps:
+      - name: Run unit tests
+        run: |
+          echo "🧪 Running unit tests"
+          echo "🔬 Testing frontend components"
+          sleep 2
+          echo "🔬 Testing backend services"
+          sleep 3
+          echo "🔬 Testing database operations"
+          sleep 2
+          echo "📊 Test Results:"
+          echo "   Frontend: 127 tests passed"
+          echo "   Backend: 89 tests passed"
+          echo "   Database: 45 tests passed"
+          echo "✅ All unit tests passed"

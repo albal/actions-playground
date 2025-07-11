@@ -1,0 +1,55 @@
+name: Example - Testing Only Pipeline
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  workflow_dispatch:
+
+jobs:
+  # Pipeline that only runs tests for PR validation
+  environment-setup:
+    name: Environment Setup
+    uses: ./.github/workflows/environment-setup-reusable.yml
+
+  dependency-cache:
+    name: Cache Dependencies
+    uses: ./.github/workflows/dependency-cache-reusable.yml
+
+  code-quality:
+    name: Code Quality Check
+    uses: ./.github/workflows/code-quality-reusable.yml
+
+  frontend-build:
+    name: Frontend Build
+    uses: ./.github/workflows/frontend-build-reusable.yml
+    needs: [environment-setup, dependency-cache, code-quality]
+    with:
+      build-version: ${{ needs.environment-setup.outputs.build-version }}
+
+  backend-build:
+    name: Backend Build
+    uses: ./.github/workflows/backend-build-reusable.yml
+    needs: [environment-setup, dependency-cache, code-quality]
+    with:
+      build-version: ${{ needs.environment-setup.outputs.build-version }}
+
+  unit-tests:
+    name: Unit Tests
+    uses: ./.github/workflows/unit-tests-reusable.yml
+    needs: [frontend-build, backend-build]
+    with:
+      skip-tests: false
+
+  integration-tests:
+    name: Integration Tests
+    uses: ./.github/workflows/integration-tests-reusable.yml
+    needs: [frontend-build, backend-build]
+    with:
+      skip-tests: false
+
+  e2e-tests:
+    name: E2E Tests
+    uses: ./.github/workflows/e2e-tests-reusable.yml
+    needs: [frontend-build, backend-build]
+    with:
+      skip-tests: false

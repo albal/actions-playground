@@ -1,0 +1,46 @@
+name: Deploy Phase - Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      package-version:
+        description: "Version of the package to deploy"
+        required: true
+        type: string
+      environment:
+        description: "Target deployment environment"
+        required: true
+        type: string
+    outputs:
+      deployment-url:
+        description: "URL of the deployed application"
+        value: ${{ jobs.deploy-package.outputs.deployment-url }}
+
+jobs:
+  deploy-package:
+    name: Deploy to Package Manager
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    outputs:
+      deployment-url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - name: Deploy to Package Manager
+        id: deploy
+        run: |
+          echo "🚀 Deploying to ${{ inputs.environment }} environment"
+          echo "📦 Using package: ${{ inputs.package-version }}"
+          echo "🔧 Configuring ${{ inputs.environment }} environment"
+          sleep 2
+          echo "📥 Downloading deployment package"
+          sleep 2
+          echo "🚀 Deploying application"
+          sleep 4
+          echo "🔧 Running database migrations"
+          sleep 2
+          echo "🔄 Updating load balancer"
+          sleep 1
+
+          DEPLOYMENT_URL="https://${{ inputs.environment }}.example.com"
+          echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "✅ Deployment to ${{ inputs.environment }} completed"
+          echo "🌐 Application available at: $DEPLOYMENT_URL"

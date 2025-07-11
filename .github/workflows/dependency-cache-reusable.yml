@@ -1,0 +1,21 @@
+name: Dependency Cache - Reusable Workflow
+
+on:
+  workflow_call:
+
+jobs:
+  dependency-cache:
+    name: Dependency Cache
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache dependencies
+        run: |
+          echo "📦 Checking dependency cache"
+          echo "💾 Cache miss - downloading dependencies"
+          echo "📥 Downloading frontend dependencies"
+          sleep 3
+          echo "📥 Downloading backend dependencies"
+          sleep 2
+          echo "📥 Downloading test dependencies"
+          sleep 1
+          echo "✅ Dependencies cached successfully"

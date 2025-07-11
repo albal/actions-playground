@@ -1,0 +1,34 @@
+name: Frontend Build - Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      build-version:
+        description: "Build version to use"
+        required: true
+        type: string
+
+jobs:
+  frontend-build:
+    name: Frontend Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build frontend
+        run: |
+          echo "🏗️  Building frontend application"
+          echo "📦 Using version: ${{ inputs.build-version }}"
+          echo "🔧 Compiling TypeScript"
+          sleep 3
+          echo "🎨 Processing CSS/SASS files"
+          sleep 2
+          echo "📦 Bundling assets"
+          sleep 2
+          echo "🗜️  Minifying production build"
+          sleep 2
+          echo "✅ Frontend build completed"
+
+      - name: Upload frontend artifacts
+        run: |
+          echo "📤 Uploading frontend build artifacts"
+          echo "📦 Artifact size: 15.2 MB"
+          echo "✅ Frontend artifacts uploaded"

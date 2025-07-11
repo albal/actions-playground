@@ -1,0 +1,29 @@
+name: Generate Documentation - Reusable Workflow
+
+on:
+  workflow_call:
+
+jobs:
+  generate-documentation:
+    name: Generate Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate API documentation
+        run: |
+          echo "📚 Generating API documentation"
+          echo "📝 Extracting API definitions"
+          sleep 2
+          echo "📝 Generating OpenAPI specs"
+          sleep 2
+          echo "📝 Creating developer guides"
+          sleep 2
+          echo "✅ Documentation generated"
+
+      - name: Generate deployment docs
+        run: |
+          echo "📋 Generating deployment documentation"
+          echo "📝 Creating deployment guides"
+          sleep 1
+          echo "📝 Generating configuration templates"
+          sleep 1
+          echo "✅ Deployment documentation ready"

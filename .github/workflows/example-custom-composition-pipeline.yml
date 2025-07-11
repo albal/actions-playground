@@ -1,119 +1,112 @@
-name: Complex Build Pipeline
+name: Example - Custom Composition Pipeline
 
 on:
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Target deployment environment'
+      include_frontend:
+        description: 'Build frontend'
+        required: false
+        default: true
+        type: boolean
+      include_backend:
+        description: 'Build backend'
+        required: false
+        default: true
+        type: boolean
+      include_tests:
+        description: 'Run tests'
+        required: false
+        default: true
+        type: boolean
+      target_environment:
+        description: 'Target environment'
         required: true
         default: 'staging'
         type: choice
         options:
           - staging
           - production
-      skip_tests:
-        description: 'Skip test phase'
-        required: false
-        default: false
-        type: boolean
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
 
 jobs:
-  # =============================================================================
-  # SETUP PHASE - Individual reusable workflows
-  # =============================================================================
-
+  # Always run environment setup
   environment-setup:
     name: Environment Setup
     uses: ./.github/workflows/environment-setup-reusable.yml
 
   dependency-cache:
-    name: Dependency Cache
+    name: Cache Dependencies
     uses: ./.github/workflows/dependency-cache-reusable.yml
 
   code-quality:
     name: Code Quality Check
     uses: ./.github/workflows/code-quality-reusable.yml
 
-  # =============================================================================
-  # BUILD PHASE - Individual reusable workflows
-  # =============================================================================
-
+  # Conditionally build frontend
   frontend-build:
     name: Frontend Build
+    if: ${{ inputs.include_frontend }}
     uses: ./.github/workflows/frontend-build-reusable.yml
     needs: [environment-setup, dependency-cache, code-quality]
     with:
       build-version: ${{ needs.environment-setup.outputs.build-version }}
 
+  # Conditionally build backend
   backend-build:
     name: Backend Build
+    if: ${{ inputs.include_backend }}
     uses: ./.github/workflows/backend-build-reusable.yml
     needs: [environment-setup, dependency-cache, code-quality]
     with:
       build-version: ${{ needs.environment-setup.outputs.build-version }}
 
+  # Database is always built if either frontend or backend is built
   database-build:
     name: Database Build
+    if: ${{ inputs.include_frontend || inputs.include_backend }}
     uses: ./.github/workflows/database-build-reusable.yml
     needs: [environment-setup, dependency-cache, code-quality]
     with:
       build-version: ${{ needs.environment-setup.outputs.build-version }}
 
-  # =============================================================================
-  # TEST PHASE - Individual reusable workflows
-  # =============================================================================
-
+  # Run tests only if requested and builds are successful
   unit-tests:
     name: Unit Tests
+    if: ${{ inputs.include_tests && !cancelled() && (inputs.include_frontend || inputs.include_backend) }}
     uses: ./.github/workflows/unit-tests-reusable.yml
     needs: [frontend-build, backend-build, database-build]
     with:
-      skip-tests: ${{ inputs.skip_tests || false }}
+      skip-tests: false
 
   integration-tests:
     name: Integration Tests
+    if: ${{ inputs.include_tests && inputs.include_frontend && inputs.include_backend }}
     uses: ./.github/workflows/integration-tests-reusable.yml
     needs: [frontend-build, backend-build, database-build]
     with:
-      skip-tests: ${{ inputs.skip_tests || false }}
+      skip-tests: false
 
-  e2e-tests:
-    name: End-to-End Tests
-    uses: ./.github/workflows/e2e-tests-reusable.yml
-    needs: [frontend-build, backend-build, database-build]
-    with:
-      skip-tests: ${{ inputs.skip_tests || false }}
-
-  # =============================================================================
-  # PACKAGE PHASE - Individual reusable workflows
-  # =============================================================================
-
+  # Package application
   package-application:
     name: Package Application
+    if: ${{ !cancelled() && (inputs.include_frontend || inputs.include_backend) }}
     uses: ./.github/workflows/package-application-reusable.yml
-    needs: [unit-tests, integration-tests, e2e-tests, environment-setup]
-    if: ${{ !cancelled() && (success() || inputs.skip_tests) }}
+    needs: [unit-tests, integration-tests, environment-setup]
     with:
       build-version: ${{ needs.environment-setup.outputs.build-version }}
 
+  # Generate documentation
   generate-documentation:
     name: Generate Documentation
+    if: ${{ !cancelled() && (inputs.include_frontend || inputs.include_backend) }}
     uses: ./.github/workflows/generate-documentation-reusable.yml
-    needs: [unit-tests, integration-tests, e2e-tests]
-    if: ${{ !cancelled() && (success() || inputs.skip_tests) }}
+    needs: [unit-tests, integration-tests]
 
-  # =============================================================================
-  # DEPLOY PHASE - Individual reusable workflows
-  # =============================================================================
-
+  # Deploy application
   deploy-application:
     name: Deploy Application
+    if: ${{ !cancelled() && (inputs.include_frontend || inputs.include_backend) }}
     uses: ./.github/workflows/deploy-application-reusable.yml
     needs: [package-application]
     with:
       package-version: ${{ needs.package-application.outputs.package-version }}
-      environment: ${{ inputs.environment || 'staging' }}
+      environment: ${{ inputs.target_environment }}
