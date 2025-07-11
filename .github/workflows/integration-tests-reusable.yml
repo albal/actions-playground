@@ -1,0 +1,30 @@
+name: Integration Tests - Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      skip-tests:
+        description: "Skip test execution"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    if: ${{ !inputs.skip-tests }}
+    steps:
+      - name: Run integration tests
+        run: |
+          echo "🔗 Running integration tests"
+          echo "🔧 Setting up test environment"
+          sleep 2
+          echo "🔌 Testing API endpoints"
+          sleep 4
+          echo "🔌 Testing service communication"
+          sleep 3
+          echo "🔌 Testing database connectivity"
+          sleep 2
+          echo "📊 Integration test results: 34 tests passed"
+          echo "✅ All integration tests passed"

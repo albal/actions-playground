@@ -1,0 +1,34 @@
+name: Backend Build - Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      build-version:
+        description: "Build version to use"
+        required: true
+        type: string
+
+jobs:
+  backend-build:
+    name: Backend Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build backend
+        run: |
+          echo "🏗️  Building backend application"
+          echo "📦 Using version: ${{ inputs.build-version }}"
+          echo "⚙️  Compiling backend services"
+          sleep 4
+          echo "🔧 Building API gateway"
+          sleep 2
+          echo "🔧 Building microservices"
+          sleep 3
+          echo "📦 Creating service binaries"
+          sleep 2
+          echo "✅ Backend build completed"
+
+      - name: Upload backend artifacts
+        run: |
+          echo "📤 Uploading backend build artifacts"
+          echo "📦 Artifact size: 42.1 MB"
+          echo "✅ Backend artifacts uploaded"

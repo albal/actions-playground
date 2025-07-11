@@ -1,0 +1,27 @@
+name: Code Quality Check - Reusable Workflow
+
+on:
+  workflow_call:
+
+jobs:
+  code-quality:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run linting
+        run: |
+          echo "🔍 Running code linting"
+          echo "📝 Checking JavaScript/TypeScript files"
+          sleep 2
+          echo "📝 Checking Python files"
+          sleep 1
+          echo "📝 Checking YAML files"
+          sleep 1
+          echo "✅ Linting passed"
+
+      - name: Security scan
+        run: |
+          echo "🔒 Running security vulnerability scan"
+          echo "🔍 Scanning dependencies for known vulnerabilities"
+          sleep 2
+          echo "✅ No security vulnerabilities found"

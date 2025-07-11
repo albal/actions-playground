@@ -1,0 +1,29 @@
+name: Database Build - Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      build-version:
+        description: "Build version to use"
+        required: true
+        type: string
+
+jobs:
+  database-build:
+    name: Database Migration Scripts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate migration scripts
+        run: |
+          echo "🗄️  Generating database migration scripts"
+          echo "📦 Using version: ${{ inputs.build-version }}"
+          echo "📝 Analyzing schema changes"
+          sleep 2
+          echo "📝 Generating migration scripts"
+          sleep 2
+          echo "✅ Database migrations ready"
+
+      - name: Validate migrations
+        run: |
+          echo "🔍 Validating migration scripts"
+          echo "✅ All migrations validated"

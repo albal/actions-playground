@@ -1,0 +1,30 @@
+name: E2E Tests - Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      skip-tests:
+        description: "Skip test execution"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  e2e-tests:
+    name: End-to-End Tests
+    runs-on: ubuntu-latest
+    if: ${{ !inputs.skip-tests }}
+    steps:
+      - name: Run E2E tests
+        run: |
+          echo "🎭 Running end-to-end tests"
+          echo "🌐 Starting test browser"
+          sleep 2
+          echo "🖱️  Testing user workflows"
+          sleep 5
+          echo "📱 Testing mobile responsiveness"
+          sleep 3
+          echo "🔍 Testing accessibility"
+          sleep 2
+          echo "📊 E2E test results: 18 scenarios passed"
+          echo "✅ All E2E tests passed"
