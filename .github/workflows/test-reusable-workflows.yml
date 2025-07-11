@@ -4,28 +4,50 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-setup:
-    name: Test Setup Phase
-    uses: ./.github/workflows/setup-reusable.yml
+  test-environment-setup:
+    name: Test Environment Setup
+    uses: ./.github/workflows/environment-setup-reusable.yml
 
-  test-build:
-    name: Test Build Phase
-    uses: ./.github/workflows/build-reusable.yml
-    needs: [test-setup]
-    with:
-      build-version: ${{ needs.test-setup.outputs.build-version }}
+  test-dependency-cache:
+    name: Test Dependency Cache
+    uses: ./.github/workflows/dependency-cache-reusable.yml
 
-  test-package:
-    name: Test Package Phase
-    uses: ./.github/workflows/package-reusable.yml
-    needs: [test-build, test-setup]
-    with:
-      build-version: ${{ needs.test-setup.outputs.build-version }}
+  test-code-quality:
+    name: Test Code Quality
+    uses: ./.github/workflows/code-quality-reusable.yml
 
-  test-deploy:
-    name: Test Deploy Phase
-    uses: ./.github/workflows/deploy-reusable.yml
-    needs: [test-package]
+  test-frontend-build:
+    name: Test Frontend Build
+    uses: ./.github/workflows/frontend-build-reusable.yml
+    needs: [test-environment-setup]
     with:
-      package-version: ${{ needs.test-package.outputs.package-version }}
+      build-version: ${{ needs.test-environment-setup.outputs.build-version }}
+
+  test-backend-build:
+    name: Test Backend Build
+    uses: ./.github/workflows/backend-build-reusable.yml
+    needs: [test-environment-setup]
+    with:
+      build-version: ${{ needs.test-environment-setup.outputs.build-version }}
+
+  test-unit-tests:
+    name: Test Unit Tests
+    uses: ./.github/workflows/unit-tests-reusable.yml
+    needs: [test-frontend-build, test-backend-build]
+    with:
+      skip-tests: false
+
+  test-package-application:
+    name: Test Package Application
+    uses: ./.github/workflows/package-application-reusable.yml
+    needs: [test-unit-tests, test-environment-setup]
+    with:
+      build-version: ${{ needs.test-environment-setup.outputs.build-version }}
+
+  test-deploy-application:
+    name: Test Deploy Application
+    uses: ./.github/workflows/deploy-application-reusable.yml
+    needs: [test-package-application]
+    with:
+      package-version: ${{ needs.test-package-application.outputs.package-version }}
       environment: staging
