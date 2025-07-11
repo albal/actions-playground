@@ -17,312 +17,61 @@ on:
         default: false
         type: boolean
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 
 jobs:
   # =============================================================================
-  # SETUP PHASE - Parallel execution
+  # SETUP PHASE - Using reusable workflow
   # =============================================================================
-  
-  environment-setup:
-    name: Environment Setup
-    runs-on: ubuntu-latest
-    outputs:
-      build-version: ${{ steps.version.outputs.version }}
-      cache-key: ${{ steps.cache-key.outputs.key }}
-    steps:
-      - name: Checkout code
-        run: echo "🔄 Checking out code from repository"
-        
-      - name: Generate build version
-        id: version
-        run: |
-          VERSION="1.0.${GITHUB_RUN_NUMBER}-${GITHUB_SHA::8}"
-          echo "🏷️  Generated version: $VERSION"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          
-      - name: Generate cache key
-        id: cache-key
-        run: |
-          CACHE_KEY="deps-$(date +%Y%m%d)-${{ github.sha }}"
-          echo "🔑 Generated cache key: $CACHE_KEY"
-          echo "key=$CACHE_KEY" >> $GITHUB_OUTPUT
-          
-      - name: Setup build environment
-        run: |
-          echo "🛠️  Setting up build environment"
-          echo "📦 Installing base dependencies"
-          echo "🔧 Configuring environment variables"
-          sleep 2
 
-  dependency-cache:
-    name: Dependency Cache
-    runs-on: ubuntu-latest
-    steps:
-      - name: Cache dependencies
-        run: |
-          echo "📦 Checking dependency cache"
-          echo "💾 Cache miss - downloading dependencies"
-          echo "📥 Downloading frontend dependencies"
-          sleep 3
-          echo "📥 Downloading backend dependencies"
-          sleep 2
-          echo "📥 Downloading test dependencies"
-          sleep 1
-          echo "✅ Dependencies cached successfully"
-
-  code-quality:
-    name: Code Quality Check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run linting
-        run: |
-          echo "🔍 Running code linting"
-          echo "📝 Checking JavaScript/TypeScript files"
-          sleep 2
-          echo "📝 Checking Python files"
-          sleep 1
-          echo "📝 Checking YAML files"
-          sleep 1
-          echo "✅ Linting passed"
-          
-      - name: Security scan
-        run: |
-          echo "🔒 Running security vulnerability scan"
-          echo "🔍 Scanning dependencies for known vulnerabilities"
-          sleep 2
-          echo "✅ No security vulnerabilities found"
+  setup-phase:
+    name: Setup Phase
+    uses: ./.github/workflows/setup-reusable.yml
 
   # =============================================================================
-  # BUILD PHASE - Parallel execution, depends on setup
+  # BUILD PHASE - Using reusable workflow
   # =============================================================================
-  
-  frontend-build:
-    name: Frontend Build
-    runs-on: ubuntu-latest
-    needs: [environment-setup, dependency-cache, code-quality]
-    steps:
-      - name: Build frontend
-        run: |
-          echo "🏗️  Building frontend application"
-          echo "📦 Using version: ${{ needs.environment-setup.outputs.build-version }}"
-          echo "🔧 Compiling TypeScript"
-          sleep 3
-          echo "🎨 Processing CSS/SASS files"
-          sleep 2
-          echo "📦 Bundling assets"
-          sleep 2
-          echo "🗜️  Minifying production build"
-          sleep 2
-          echo "✅ Frontend build completed"
-          
-      - name: Upload frontend artifacts
-        run: |
-          echo "📤 Uploading frontend build artifacts"
-          echo "📦 Artifact size: 15.2 MB"
-          echo "✅ Frontend artifacts uploaded"
 
-  backend-build:
-    name: Backend Build
-    runs-on: ubuntu-latest
-    needs: [environment-setup, dependency-cache, code-quality]
-    steps:
-      - name: Build backend
-        run: |
-          echo "🏗️  Building backend application"
-          echo "📦 Using version: ${{ needs.environment-setup.outputs.build-version }}"
-          echo "⚙️  Compiling backend services"
-          sleep 4
-          echo "🔧 Building API gateway"
-          sleep 2
-          echo "🔧 Building microservices"
-          sleep 3
-          echo "📦 Creating service binaries"
-          sleep 2
-          echo "✅ Backend build completed"
-          
-      - name: Upload backend artifacts
-        run: |
-          echo "📤 Uploading backend build artifacts"
-          echo "📦 Artifact size: 42.1 MB"
-          echo "✅ Backend artifacts uploaded"
-
-  database-build:
-    name: Database Migration Scripts
-    runs-on: ubuntu-latest
-    needs: [environment-setup, dependency-cache, code-quality]
-    steps:
-      - name: Generate migration scripts
-        run: |
-          echo "🗄️  Generating database migration scripts"
-          echo "📦 Using version: ${{ needs.environment-setup.outputs.build-version }}"
-          echo "📝 Analyzing schema changes"
-          sleep 2
-          echo "📝 Generating migration scripts"
-          sleep 2
-          echo "✅ Database migrations ready"
-          
-      - name: Validate migrations
-        run: |
-          echo "🔍 Validating migration scripts"
-          echo "✅ All migrations validated"
+  build-phase:
+    name: Build Phase
+    uses: ./.github/workflows/build-reusable.yml
+    needs: [setup-phase]
+    with:
+      build-version: ${{ needs.setup-phase.outputs.build-version }}
 
   # =============================================================================
-  # TEST PHASE - Parallel execution, depends on build
+  # TEST PHASE - Using reusable workflow
   # =============================================================================
-  
-  unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    needs: [frontend-build, backend-build, database-build]
-    if: ${{ !inputs.skip_tests }}
-    steps:
-      - name: Run unit tests
-        run: |
-          echo "🧪 Running unit tests"
-          echo "🔬 Testing frontend components"
-          sleep 2
-          echo "🔬 Testing backend services"
-          sleep 3
-          echo "🔬 Testing database operations"
-          sleep 2
-          echo "📊 Test Results:"
-          echo "   Frontend: 127 tests passed"
-          echo "   Backend: 89 tests passed"
-          echo "   Database: 45 tests passed"
-          echo "✅ All unit tests passed"
 
-  integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    needs: [frontend-build, backend-build, database-build]
-    if: ${{ !inputs.skip_tests }}
-    steps:
-      - name: Run integration tests
-        run: |
-          echo "🔗 Running integration tests"
-          echo "🔧 Setting up test environment"
-          sleep 2
-          echo "🔌 Testing API endpoints"
-          sleep 4
-          echo "🔌 Testing service communication"
-          sleep 3
-          echo "🔌 Testing database connectivity"
-          sleep 2
-          echo "📊 Integration test results: 34 tests passed"
-          echo "✅ All integration tests passed"
-
-  e2e-tests:
-    name: End-to-End Tests
-    runs-on: ubuntu-latest
-    needs: [frontend-build, backend-build, database-build]
-    if: ${{ !inputs.skip_tests }}
-    steps:
-      - name: Run E2E tests
-        run: |
-          echo "🎭 Running end-to-end tests"
-          echo "🌐 Starting test browser"
-          sleep 2
-          echo "🖱️  Testing user workflows"
-          sleep 5
-          echo "📱 Testing mobile responsiveness"
-          sleep 3
-          echo "🔍 Testing accessibility"
-          sleep 2
-          echo "📊 E2E test results: 18 scenarios passed"
-          echo "✅ All E2E tests passed"
+  test-phase:
+    name: Test Phase
+    uses: ./.github/workflows/test-reusable.yml
+    needs: [build-phase]
+    with:
+      skip-tests: ${{ inputs.skip_tests }}
 
   # =============================================================================
-  # PACKAGE PHASE - Sequential execution, depends on tests
+  # PACKAGE PHASE - Using reusable workflow
   # =============================================================================
-  
-  package-application:
-    name: Package Application
-    runs-on: ubuntu-latest
-    needs: [unit-tests, integration-tests, e2e-tests]
+
+  package-phase:
+    name: Package Phase
+    uses: ./.github/workflows/package-reusable.yml
+    needs: [test-phase, setup-phase]
     if: ${{ !cancelled() && (success() || inputs.skip_tests) }}
-    outputs:
-      package-version: ${{ steps.package.outputs.version }}
-      package-size: ${{ steps.package.outputs.size }}
-    steps:
-      - name: Package application
-        id: package
-        run: |
-          echo "📦 Packaging application"
-          echo "🏗️  Creating deployment package"
-          sleep 3
-          echo "🗜️  Compressing assets"
-          sleep 2
-          echo "📝 Generating deployment manifest"
-          sleep 1
-          
-          PACKAGE_VERSION="${{ needs.unit-tests.needs.frontend-build.needs.environment-setup.outputs.build-version || '1.0.0' }}"
-          PACKAGE_SIZE="127.5 MB"
-          
-          echo "📦 Package created successfully"
-          echo "   Version: $PACKAGE_VERSION"
-          echo "   Size: $PACKAGE_SIZE"
-          echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
-          echo "size=$PACKAGE_SIZE" >> $GITHUB_OUTPUT
-          echo "✅ Application packaged"
-
-  generate-documentation:
-    name: Generate Documentation
-    runs-on: ubuntu-latest
-    needs: [unit-tests, integration-tests, e2e-tests]
-    if: ${{ !cancelled() && (success() || inputs.skip_tests) }}
-    steps:
-      - name: Generate API documentation
-        run: |
-          echo "📚 Generating API documentation"
-          echo "📝 Extracting API definitions"
-          sleep 2
-          echo "📝 Generating OpenAPI specs"
-          sleep 2
-          echo "📝 Creating developer guides"
-          sleep 2
-          echo "✅ Documentation generated"
-          
-      - name: Generate deployment docs
-        run: |
-          echo "📋 Generating deployment documentation"
-          echo "📝 Creating deployment guides"
-          sleep 1
-          echo "📝 Generating configuration templates"
-          sleep 1
-          echo "✅ Deployment documentation ready"
+    with:
+      build-version: ${{ needs.setup-phase.outputs.build-version }}
 
   # =============================================================================
-  # DEPLOY Package - Sequential execution, depends on package
+  # DEPLOY PHASE - Using reusable workflow
   # =============================================================================
-  
-  deploy-package:
-    name: Deploy to Package Manager
-    runs-on: ubuntu-latest
-    needs: [package-application, generate-documentation]
-    environment: staging
-    outputs:
-      deployment-url: ${{ steps.deploy.outputs.url }}
-    steps:
-      - name: Deploy to Package Manager
-        id: deploy
-        run: |
-          echo "🚀 Deploying to staging environment"
-          echo "📦 Using package: ${{ needs.package-application.outputs.package-version }}"
-          echo "🔧 Configuring staging environment"
-          sleep 2
-          echo "📥 Downloading deployment package"
-          sleep 2
-          echo "🚀 Deploying application"
-          sleep 4
-          echo "🔧 Running database migrations"
-          sleep 2
-          echo "🔄 Updating load balancer"
-          sleep 1
-          
-          DEPLOYMENT_URL="https://staging.example.com"
-          echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
-          echo "✅ Deployment to staging completed"
-          echo "🌐 Application available at: $DEPLOYMENT_URL"
+
+  deploy-phase:
+    name: Deploy Phase
+    uses: ./.github/workflows/deploy-reusable.yml
+    needs: [package-phase]
+    with:
+      package-version: ${{ needs.package-phase.outputs.package-version }}
+      environment: ${{ inputs.environment }}

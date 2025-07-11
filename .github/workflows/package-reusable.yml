@@ -1,0 +1,69 @@
+name: Package Phase - Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      build-version:
+        description: "Build version to use for packaging"
+        required: true
+        type: string
+    outputs:
+      package-version:
+        description: "Version of the packaged application"
+        value: ${{ jobs.package-application.outputs.package-version }}
+      package-size:
+        description: "Size of the packaged application"
+        value: ${{ jobs.package-application.outputs.package-size }}
+
+jobs:
+  package-application:
+    name: Package Application
+    runs-on: ubuntu-latest
+    outputs:
+      package-version: ${{ steps.package.outputs.version }}
+      package-size: ${{ steps.package.outputs.size }}
+    steps:
+      - name: Package application
+        id: package
+        run: |
+          echo "📦 Packaging application"
+          echo "🏗️  Creating deployment package"
+          sleep 3
+          echo "🗜️  Compressing assets"
+          sleep 2
+          echo "📝 Generating deployment manifest"
+          sleep 1
+
+          PACKAGE_VERSION="${{ inputs.build-version }}"
+          PACKAGE_SIZE="127.5 MB"
+
+          echo "📦 Package created successfully"
+          echo "   Version: $PACKAGE_VERSION"
+          echo "   Size: $PACKAGE_SIZE"
+          echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+          echo "size=$PACKAGE_SIZE" >> $GITHUB_OUTPUT
+          echo "✅ Application packaged"
+
+  generate-documentation:
+    name: Generate Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate API documentation
+        run: |
+          echo "📚 Generating API documentation"
+          echo "📝 Extracting API definitions"
+          sleep 2
+          echo "📝 Generating OpenAPI specs"
+          sleep 2
+          echo "📝 Creating developer guides"
+          sleep 2
+          echo "✅ Documentation generated"
+
+      - name: Generate deployment docs
+        run: |
+          echo "📋 Generating deployment documentation"
+          echo "📝 Creating deployment guides"
+          sleep 1
+          echo "📝 Generating configuration templates"
+          sleep 1
+          echo "✅ Deployment documentation ready"

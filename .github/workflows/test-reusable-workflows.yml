@@ -1,0 +1,31 @@
+name: Test Reusable Workflows
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-setup:
+    name: Test Setup Phase
+    uses: ./.github/workflows/setup-reusable.yml
+
+  test-build:
+    name: Test Build Phase
+    uses: ./.github/workflows/build-reusable.yml
+    needs: [test-setup]
+    with:
+      build-version: ${{ needs.test-setup.outputs.build-version }}
+
+  test-package:
+    name: Test Package Phase
+    uses: ./.github/workflows/package-reusable.yml
+    needs: [test-build, test-setup]
+    with:
+      build-version: ${{ needs.test-setup.outputs.build-version }}
+
+  test-deploy:
+    name: Test Deploy Phase
+    uses: ./.github/workflows/deploy-reusable.yml
+    needs: [test-package]
+    with:
+      package-version: ${{ needs.test-package.outputs.package-version }}
+      environment: staging

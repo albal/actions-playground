@@ -1,0 +1,26 @@
+name: Example - Testing Only Pipeline
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  workflow_dispatch:
+
+jobs:
+  # Pipeline that only runs tests for PR validation
+  setup:
+    name: Setup for Testing
+    uses: ./.github/workflows/setup-reusable.yml
+
+  build:
+    name: Build for Testing
+    uses: ./.github/workflows/build-reusable.yml
+    needs: [setup]
+    with:
+      build-version: ${{ needs.setup.outputs.build-version }}
+
+  test:
+    name: Run All Tests
+    uses: ./.github/workflows/test-reusable.yml
+    needs: [build]
+    with:
+      skip-tests: false

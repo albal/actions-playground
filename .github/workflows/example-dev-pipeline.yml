@@ -1,0 +1,34 @@
+name: Example - Development Pipeline
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+jobs:
+  # Quick development pipeline that skips tests and deploys to staging
+  setup:
+    name: Setup Environment
+    uses: ./.github/workflows/setup-reusable.yml
+
+  build:
+    name: Build Application
+    uses: ./.github/workflows/build-reusable.yml
+    needs: [setup]
+    with:
+      build-version: ${{ needs.setup.outputs.build-version }}
+
+  package:
+    name: Package for Development
+    uses: ./.github/workflows/package-reusable.yml
+    needs: [build, setup]
+    with:
+      build-version: ${{ needs.setup.outputs.build-version }}
+
+  deploy:
+    name: Deploy to Development
+    uses: ./.github/workflows/deploy-reusable.yml
+    needs: [package]
+    with:
+      package-version: ${{ needs.package.outputs.package-version }}
+      environment: staging
