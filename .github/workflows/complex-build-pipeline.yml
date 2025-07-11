@@ -295,18 +295,18 @@ jobs:
           echo "✅ Deployment documentation ready"
 
   # =============================================================================
-  # DEPLOY PHASE - Sequential execution, depends on package
+  # DEPLOY Package - Sequential execution, depends on package
   # =============================================================================
   
-  deploy-staging:
-    name: Deploy to Staging
+  deploy-package:
+    name: Deploy to Package Manager
     runs-on: ubuntu-latest
     needs: [package-application, generate-documentation]
     environment: staging
     outputs:
       deployment-url: ${{ steps.deploy.outputs.url }}
     steps:
-      - name: Deploy to staging
+      - name: Deploy to Package Manager
         id: deploy
         run: |
           echo "🚀 Deploying to staging environment"
@@ -326,80 +326,3 @@ jobs:
           echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
           echo "✅ Deployment to staging completed"
           echo "🌐 Application available at: $DEPLOYMENT_URL"
-
-  smoke-tests:
-    name: Smoke Tests
-    runs-on: ubuntu-latest
-    needs: [deploy-staging]
-    steps:
-      - name: Run smoke tests
-        run: |
-          echo "💨 Running smoke tests on staging"
-          echo "🌐 Testing deployment URL: ${{ needs.deploy-staging.outputs.deployment-url }}"
-          echo "🔍 Testing health endpoints"
-          sleep 2
-          echo "🔍 Testing critical user paths"
-          sleep 3
-          echo "🔍 Testing database connectivity"
-          sleep 1
-          echo "📊 Smoke test results: All critical paths working"
-          echo "✅ Smoke tests passed"
-
-  deploy-production:
-    name: Deploy to Production
-    runs-on: ubuntu-latest
-    needs: [smoke-tests]
-    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'production') }}
-    environment: production
-    steps:
-      - name: Deploy to production
-        run: |
-          echo "🚀 Deploying to production environment"
-          echo "📦 Using package: ${{ needs.smoke-tests.needs.deploy-staging.needs.package-application.outputs.package-version }}"
-          echo "⚠️  Production deployment requires manual approval"
-          echo "🔧 Configuring production environment"
-          sleep 3
-          echo "📥 Downloading deployment package"
-          sleep 2
-          echo "🚀 Deploying application"
-          sleep 5
-          echo "🔧 Running database migrations"
-          sleep 3
-          echo "🔄 Updating load balancer"
-          sleep 2
-          echo "📊 Verifying deployment health"
-          sleep 2
-          echo "✅ Production deployment completed"
-          echo "🌐 Application available at: https://production.example.com"
-
-  # =============================================================================
-  # NOTIFICATION PHASE - Runs after deployment
-  # =============================================================================
-  
-  notify-success:
-    name: Notify Success
-    runs-on: ubuntu-latest
-    needs: [deploy-production]
-    if: ${{ success() }}
-    steps:
-      - name: Send success notification
-        run: |
-          echo "📧 Sending success notification"
-          echo "🎉 Deployment completed successfully"
-          echo "📦 Version: ${{ needs.deploy-production.needs.smoke-tests.needs.deploy-staging.needs.package-application.outputs.package-version }}"
-          echo "🌐 Production URL: https://production.example.com"
-          echo "📊 Total pipeline duration: ~15 minutes"
-          echo "✅ Success notification sent"
-
-  notify-failure:
-    name: Notify Failure
-    runs-on: ubuntu-latest
-    needs: [environment-setup, dependency-cache, code-quality, frontend-build, backend-build, database-build, unit-tests, integration-tests, e2e-tests, package-application, generate-documentation, deploy-staging, smoke-tests, deploy-production]
-    if: ${{ failure() }}
-    steps:
-      - name: Send failure notification
-        run: |
-          echo "📧 Sending failure notification"
-          echo "❌ Pipeline failed"
-          echo "🔍 Check the logs for more details"
-          echo "🚨 Failure notification sent"
