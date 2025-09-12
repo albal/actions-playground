@@ -14,4 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run test of App 
-        run: echo "I built it!"
+        run: |
+          echo "I built it!"
+          echo "::error::This is an error"
+          echo "::warning::This is a warning"
+          echo "::debug::This is debug"
